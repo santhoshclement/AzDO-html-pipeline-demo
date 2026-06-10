@@ -7,7 +7,7 @@ pool:
 variables:
   azureSubscription: 'simple-html-ServiceConnection'
   resourceGroup: 'rg-appservice-demo'
-  location: 'eastus'
+  location: 'southindia'
   appServicePlan: 'asp-demo-linux'
   webAppName: 'santhosh-demo-webapp-001'
 
