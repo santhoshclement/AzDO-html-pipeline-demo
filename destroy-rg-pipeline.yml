@@ -1,0 +1,54 @@
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  serviceConnection: 'serviceconnection-simple-html-demo'
+  resourceGroup: 'rg-appservice-demo'
+
+steps:
+
+- task: AzureCLI@2
+  displayName: 'Delete Resource Group Forcefully'
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+
+      echo "Checking if Resource Group exists..."
+
+      if az group exists --name $(resourceGroup); then
+
+        echo "Deleting Resource Group: $(resourceGroup)"
+
+        az group delete \
+          --name $(resourceGroup) \
+          --yes
+
+        echo "Resource Group deletion initiated."
+
+      else
+
+        echo "Resource Group $(resourceGroup) does not exist."
+
+      fi
+
+- task: AzureCLI@2
+  displayName: 'Verify Resource Group Deletion'
+  inputs:
+    azureSubscription: '$(serviceConnection)'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+
+      echo "Waiting for deletion to complete..."
+
+      while az group exists --name $(resourceGroup)
+      do
+        echo "Resource Group still exists..."
+        sleep 30
+      done
+
+      echo "Resource Group successfully deleted."
