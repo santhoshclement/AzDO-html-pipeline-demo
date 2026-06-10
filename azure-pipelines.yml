@@ -5,7 +5,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  azureSubscription: 'simple-html-ServiceConnection'
+  azureSubscription: 'az-sub-dev-infra01'
   resourceGroup: 'rg-appservice-demo'
   location: 'southindia'
   appServicePlan: 'asp-demo-linux'
