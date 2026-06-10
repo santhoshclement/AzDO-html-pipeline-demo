@@ -1,6 +1,6 @@
 trigger:
 - main
-
+# testing trigger
 pool:
   vmImage: ubuntu-latest
 
