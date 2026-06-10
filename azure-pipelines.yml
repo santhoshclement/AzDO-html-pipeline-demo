@@ -5,7 +5,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  azureSubscription: 'your-service-connection-name'
+  azureSubscription: 'simple-html-ServiceConnection'
   resourceGroup: 'rg-appservice-demo'
   location: 'eastus'
   appServicePlan: 'asp-demo-linux'
