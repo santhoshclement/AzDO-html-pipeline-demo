@@ -14,7 +14,7 @@ https://YOUR-APP-NAME.azurewebsites.net
 
 Example:
 
-http://santhosh-demo-webapp.azurewebsites.net
+http://santhosh-demo-webapp-001.azurewebsites.net/
 
 ---
 
