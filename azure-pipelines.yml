@@ -2,24 +2,53 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: ubuntu-latest
 
 variables:
-  azureSubscription: 'Your-Service-Connection-Name'
-  appName: 'your-app-service-name'
+  azureSubscription: 'your-service-connection-name'
+  resourceGroup: 'rg-appservice-demo'
+  location: 'eastus'
+  appServicePlan: 'asp-demo-linux'
+  webAppName: 'santhosh-demo-webapp-001'
 
 steps:
+- task: AzureCLI@2
+  displayName: 'Create Resource Group and App Service'
+  inputs:
+    azureSubscription: '$(azureSubscription)'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      az group create \
+        --name $(resourceGroup) \
+        --location $(location)
+
+      az appservice plan create \
+        --name $(appServicePlan) \
+        --resource-group $(resourceGroup) \
+        --location $(location) \
+        --sku B1 \
+        --is-linux
+
+      az webapp create \
+        --name $(webAppName) \
+        --resource-group $(resourceGroup) \
+        --plan $(appServicePlan) \
+        --runtime "PHP:8.2"
+
 - task: ArchiveFiles@2
+  displayName: 'Zip Website Files'
   inputs:
     rootFolderOrFile: '$(Build.SourcesDirectory)'
     includeRootFolder: false
-    archiveType: 'zip'
+    archiveType: zip
     archiveFile: '$(Build.ArtifactStagingDirectory)/site.zip'
     replaceExistingArchive: true
 
 - task: AzureWebApp@1
+  displayName: 'Deploy to Azure App Service'
   inputs:
     azureSubscription: '$(azureSubscription)'
-    appType: 'webApp'
-    appName: '$(appName)'
+    appType: webAppLinux
+    appName: '$(webAppName)'
     package: '$(Build.ArtifactStagingDirectory)/site.zip'
