@@ -1,28 +1,36 @@
 trigger:
 - main
-# testing trigger
+
 pool:
   vmImage: ubuntu-latest
 
 variables:
-  azureSubscription: 'simple-html-ServiceConnection'
+  # Replace this with the EXACT service connection name from DevOps
+  serviceConnection: 'serviceconnection-simple-html-demo'
+
   resourceGroup: 'rg-appservice-demo'
   location: 'southindia'
   appServicePlan: 'asp-demo-linux'
   webAppName: 'santhosh-demo-webapp-001'
 
 steps:
+
+# -----------------------------
+# 1. Create RG + App Service
+# -----------------------------
 - task: AzureCLI@2
   displayName: 'Create Resource Group and App Service'
   inputs:
-    azureSubscription: '$(azureSubscription)'
+    azureSubscription: '$(serviceConnection)'
     scriptType: bash
     scriptLocation: inlineScript
     inlineScript: |
+      echo "Creating Resource Group..."
       az group create \
         --name $(resourceGroup) \
         --location $(location)
 
+      echo "Creating App Service Plan..."
       az appservice plan create \
         --name $(appServicePlan) \
         --resource-group $(resourceGroup) \
@@ -30,12 +38,16 @@ steps:
         --sku B1 \
         --is-linux
 
+      echo "Creating Web App..."
       az webapp create \
         --name $(webAppName) \
         --resource-group $(resourceGroup) \
         --plan $(appServicePlan) \
         --runtime "PHP:8.2"
 
+# -----------------------------
+# 2. Zip Website Files
+# -----------------------------
 - task: ArchiveFiles@2
   displayName: 'Zip Website Files'
   inputs:
@@ -45,10 +57,13 @@ steps:
     archiveFile: '$(Build.ArtifactStagingDirectory)/site.zip'
     replaceExistingArchive: true
 
+# -----------------------------
+# 3. Deploy to App Service
+# -----------------------------
 - task: AzureWebApp@1
   displayName: 'Deploy to Azure App Service'
   inputs:
-    azureSubscription: '$(azureSubscription)'
+    azureSubscription: '$(serviceConnection)'
     appType: webAppLinux
     appName: '$(webAppName)'
     package: '$(Build.ArtifactStagingDirectory)/site.zip'
