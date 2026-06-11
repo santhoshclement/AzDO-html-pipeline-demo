@@ -45,10 +45,14 @@ steps:
 
       echo "Waiting for deletion to complete..."
 
-      while az group exists --name $(resourceGroup)
-      do
-        echo "Resource Group still exists..."
-        sleep 30
-      done
+while true; do
+    exists=$(az group exists -n $RG_NAME)
 
-      echo "Resource Group successfully deleted."
+    if [ "$exists" = false ]; then
+        echo "Resource Group deleted successfully."
+        break
+    else
+        echo "Resource Group still exists..."
+        sleep 10
+    fi
+done
