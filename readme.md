@@ -4,7 +4,7 @@ A complete end-to-end Azure DevOps CI/CD demonstration project created by **Sant
 
 This project automatically provisions Azure resources and deploys a static website using Azure DevOps Pipelines and Infrastructure as Code (Terraform).
 
-----
+-------------------
 
 ## 🌐 Live Website
 
